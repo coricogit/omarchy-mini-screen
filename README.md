@@ -8,6 +8,8 @@ Click the icon to open the panel. It lists the GIFs, images and videos in
 rotation (0°, 90°, 180°, 270°). The panel also shows whether the screen is
 plugged in and whether it is streaming.
 
+![The Mini Screen panel with its picture grid and rotation buttons](preview.png)
+
 ## Requirements
 
 This widget is only the bar front end. The USB work is done by the

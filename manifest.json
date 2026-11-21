@@ -2,8 +2,9 @@
   "schemaVersion": 1,
   "id": "corico.minipantalla",
   "name": "Mini Screen",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": "corico",
+  "license": "GPL-3.0",
   "description": "Pick the GIF, image or video shown on the 2.1\" round AX206 USB mini screen (2a55:9990) and rotate it. Needs the minipantalla CLI.",
   "kinds": [
     "bar-widget"
