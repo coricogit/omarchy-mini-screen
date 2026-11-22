@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Estado de la mini pantalla para el panel, sin tocar el USB.
 
-    lcdstate.py state   -> JSON: conectada, carpeta, archivos, actual, rotación
+    lcdstate.py state   -> JSON: conectada, carpeta, archivos, actual, rotación, ajuste
 
 Solo lee sysfs y los ajustes que guarda `minipantalla`; nunca abre el
 dispositivo, así que es seguro llamarlo a menudo y mientras se guarda algo.
@@ -19,6 +19,7 @@ FOLDER = os.environ.get("MINIPANTALLA_DIR") or os.path.join(HOME, "Pictures", "m
 TOOL = os.path.join(HOME, ".local", "bin", "minipantalla")
 SETTINGS = os.path.join(HOME, ".config", "AppotechLCD", "settings.ini")
 EXTS = {".gif", ".png", ".jpg", ".jpeg", ".bmp", ".mp4", ".mkv", ".webm", ".mov", ".avi"}
+FITS = ("cover", "contain", "stretch")
 VIDEO = {".mp4", ".mkv", ".webm", ".mov", ".avi"}
 
 
@@ -83,6 +84,7 @@ def state():
         "files": media_files(),
         "current": s.get("ResPath", ""),
         "rotation": rotation,
+        "fit": s.get("Fit") if s.get("Fit") in FITS else "cover",
         "streaming": streaming(),
         "installed": os.access(TOOL, os.X_OK),
     }

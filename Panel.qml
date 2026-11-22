@@ -37,6 +37,11 @@ Panel {
   property bool statusError: false
 
   readonly property var rotations: [0, 1, 2, 3]
+  // cover = recorta para llenar el círculo, contain = encaja entero con bordes,
+  // stretch = estira a 480×480.
+  property string fit: "cover"
+  readonly property var fits: ["cover", "contain", "stretch"]
+  readonly property var fitIcons: ({ cover: "󰩨", contain: "󰊓", stretch: "󰁌" })
 
   function refresh() {
     if (!stateProc.running) stateProc.running = true
@@ -50,6 +55,7 @@ Panel {
       root.files = s.files || []
       root.current = s.current || ""
       root.rotation = s.rotation || 0
+      root.fit = root.fits.indexOf(s.fit) >= 0 ? s.fit : "cover"
       root.streaming = !!s.streaming
       root.installed = s.installed !== false
     } catch (e) {
@@ -75,7 +81,27 @@ Panel {
     root.busyFile = path
     root.progress = 0
     root.status = ""
-    usbProc.command = [root.tool, "poner", path]
+    // Conserva el ajuste elegido al cambiar de archivo.
+    usbProc.command = [root.tool, "poner", path, "--fit", root.fit]
+    usbProc.running = true
+  }
+
+  // Vuelve a poner el archivo actual con otro ajuste (el servicio lo cambia en vivo).
+  function setFit(f) {
+    if (root.busy || !root.connected || !root.installed || f === root.fit) return
+    if (root.fits.indexOf(f) < 0) return
+    if (root.current === "") {
+      root.status = strings.t("fitNoFile")
+      root.statusError = true
+      return
+    }
+    root.busy = true
+    root.busyKind = "fit"
+    root.busyFile = root.current
+    root.progress = 0
+    root.status = ""
+    root.fit = f
+    usbProc.command = [root.tool, "poner", root.current, "--fit", f]
     usbProc.running = true
   }
 
@@ -93,7 +119,7 @@ Panel {
     if (code === 0) {
       root.status = root.busyKind === "save"
         ? strings.t("saved").arg(root.baseName(root.busyFile))
-        : strings.t("rotated")
+        : root.busyKind === "fit" ? strings.t("fitted") : strings.t("rotated")
       root.statusError = false
     } else {
       root.status = strings.t("failed").arg(root.errorLine(usbErr.text))
@@ -270,7 +296,7 @@ Panel {
                 text: root.busy
                   ? (root.busyKind === "save"
                       ? strings.t("saving").arg(root.baseName(root.busyFile))
-                      : strings.t("rotating"))
+                      : root.busyKind === "fit" ? strings.t("fitting") : strings.t("rotating"))
                   : root.status
                 color: root.bar.foreground
                 font.family: root.bar.fontFamily
@@ -358,6 +384,47 @@ Panel {
                 fontFamily: root.bar.fontFamily
                 fontSize: Style.font.caption
                 onClicked: root.refresh()
+              }
+            }
+          }
+
+          PanelSeparator { foreground: root.bar.foreground }
+
+          // ---------- Ajuste ----------
+          Column {
+            width: parent.width
+            spacing: Style.space(10)
+
+            PanelSectionHeader {
+              text: strings.t("fit")
+              foreground: root.bar.foreground
+              fontFamily: root.bar.fontFamily
+            }
+
+            Grid {
+              id: fitRow
+              width: parent.width
+              columns: root.fits.length
+              spacing: Style.spacing.xs
+              readonly property real cellWidth: (width - spacing * (columns - 1)) / columns
+
+              Repeater {
+                model: root.fits
+
+                Button {
+                  required property string modelData
+                  width: fitRow.cellWidth
+                  text: strings.t("fit." + modelData)
+                  iconText: root.fitIcons[modelData] || ""
+                  active: root.fit === modelData
+                  enabled: root.connected && root.installed && !root.busy && root.current !== ""
+                  bordered: true
+                  foreground: root.bar.foreground
+                  fontFamily: root.bar.fontFamily
+                  fontSize: Style.font.caption
+                  horizontalPadding: Style.spacing.xs
+                  onClicked: root.setFit(modelData)
+                }
               }
             }
           }

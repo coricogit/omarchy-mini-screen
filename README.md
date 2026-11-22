@@ -4,8 +4,10 @@ An Omarchy bar widget for the cheap **2.1" round USB mini screen** sold as
 QTKeJi / "SmatCool" / AX206 (USB `2a55:9990`, 480×480).
 
 Click the icon to open the panel. It lists the GIFs, images and videos in
-`~/Pictures/minipantalla`. Click one to show it on the screen, or pick a
-rotation (0°, 90°, 180°, 270°). The panel also shows whether the screen is
+`~/Pictures/minipantalla`. Click one to show it on the screen, pick how it
+fits the round screen (Crop fills it, Fit shows all of it with borders, Stretch
+fills it without keeping the proportions), or pick a rotation (0°, 90°, 180°,
+270°). The panel also shows whether the screen is
 plugged in and whether it is streaming.
 
 ![The Mini Screen panel with its picture grid and rotation buttons](preview.png)
@@ -52,8 +54,9 @@ Your pictures folder is never deleted.
 - The widget never opens the USB device itself. `lcdstate.py` only reads sysfs,
   `systemctl --user is-active minipantalla.service` and the CLI's
   `~/.config/AppotechLCD/settings.ini`.
-- Clicking a file runs `~/.local/bin/minipantalla poner <file>`. Picking a
-  rotation runs `minipantalla rotar <degrees>`.
+- Clicking a file runs `~/.local/bin/minipantalla poner <file> --fit <mode>`,
+  keeping the fit you picked. Picking a fit runs the same command on the
+  current file. Picking a rotation runs `minipantalla rotar <degrees>`.
 - Only the `2a55:9990` model has been tested.
 
 ## License
