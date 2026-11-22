@@ -15,5 +15,12 @@
   "current": "CURRENT",
   "streaming": "STREAMING",
   "stopped": "CONNECTED · SERVICE STOPPED",
-  "missingCli": "The minipantalla CLI is not installed. See the plugin README."
+  "missingCli": "The minipantalla CLI is not installed. See the plugin README.",
+  "fit": "FIT",
+  "fit.cover": "Crop",
+  "fit.contain": "Fit",
+  "fit.stretch": "Stretch",
+  "fitting": "Applying fit…",
+  "fitted": "Fit applied",
+  "fitNoFile": "Pick a file first to adjust it."
 }
